@@ -8,7 +8,11 @@ class titleScene extends Phaser.Scene {
 constructor() {
 super({ key: "titleScene", active: true });
 }
+preload(){
+  this.load.image("bg001", "./room1_bg.jpg");
+}
 create() {
+  bg001 = this.add.tileSprite(400, 300, 800 , 600, "bg001")
 let text = this.add.text(100, 100, "  ESCAPE Game1").setFontSize(64).setColor("#ff0");
 let clickButton = this.add.text(200, 300, "START TO CLICK", {fill: "#0f0"});
 clickButton.setStroke("#0000ff", 4);
@@ -66,7 +70,7 @@ create() {
         bg002.setPosition(400,300);
         bg002.setSize(800,600);
       }
-    } else {
+    } else if(messageMode == false && gameState == 0){
       var touchX = pointer.x;
       var touchY = pointer.y;      
       console.log("x=" + touchX + ",y=" + touchY);
@@ -182,7 +186,7 @@ var messageMode = false;
 var messageCount = 0;
 var itemFlag = false;
 var txtTime;
-var cntTimer = 0,remainTimer = 10, gameState = 0;//97=CLEAR/98=GAME OVER
+var cntTimer = 0,remainTimer = 15, gameState = 0;//97=CLEAR/98=GAME OVER
 </script>
 </body>
 </html>
