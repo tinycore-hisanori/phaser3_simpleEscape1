@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<body>
+<meta charset="UTF-8" />
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser.min.js"></script>
+<script>
+
+class titleScene extends Phaser.Scene {
+constructor() {
+super({ key: "titleScene", active: true });
+}
+create() {
+let text = this.add.text(100, 100, "  ESCAPE Game1").setFontSize(64).setColor("#ff0");
+let clickButton = this.add.text(200, 300, "START TO CLICK", {fill: "#0f0"});
+clickButton.setStroke("#0000ff", 4);
+clickButton.setFontSize("40px");
+clickButton.setInteractive();
+clickButton.on("pointerdown", () => {
+this.scene.start("MyScene1");
+});
+}
+}
+class MyScene1 extends Phaser.Scene {
+constructor() {
+super({ key: "MyScene1", active: false });
+}
+preload() {   	
+  this.load.image("bg001", "./room1_bg.jpg");
+  this.load.image("item1", "./board.png");
+  this.load.image("item2", "./key.png");
+  this.load.image("gameover", "./bakuhatu_doon.png");
+  this.load.audio("se_boom", "boom.mp3");
+  this.load.audio("se_cnt", "countdown.mp3");
+
+}
+create() {
+
+  bg001 = this.add.tileSprite(400, 300, 800 , 600, "bg001");
+  bg002 = this.add.tileSprite(400, 300, 800 , 600, "bg001");
+  seCnt  = this.sound.add("se_cnt");
+  seBoom = this.sound.add("se_boom");
+
+  this.input.on('pointerdown', function(pointer){
+    if(messageMode == true && gameState == 0){
+      if(messageCount == 0){
+        txtMessage.text = "Me:\r\nどうやら閉じ込められたみたいだ" ;
+        messageCount = 1;
+      } else if(messageCount == 1){
+        txtMessage.text = "Me:\r\nなんか焦げ臭いな...";
+        messageCount = 99;
+      } else if(messageCount == 97){
+        txtMessage.text = "GAME CLEAR!!";
+        gameState = 97;
+      } else if(messageCount == 98){
+        seBoom.play();
+        bg002.setTexture('gameover');
+            bg002.setPosition(400,300);
+            bg002.setSize(800,600);
+        txtMessage.text = "GAME OVER...";
+        txtMessage.setColor("#0");
+        gameState = 98;
+      } else if(messageCount == 99){
+        txtMessage.text = "";
+        txtMessage.setColor("#ffffff");
+        messageMode = false;
+        bg002.setTexture('bg001');
+        bg002.setPosition(400,300);
+        bg002.setSize(800,600);
+      }
+    } else {
+      var touchX = pointer.x;
+      var touchY = pointer.y;      
+      console.log("x=" + touchX + ",y=" + touchY);
+      var evt = checkClickPoint(touchX, touchY);
+      console.log("evt=" + evt);
+      switch(evt){
+        case 1:
+          if(itemFlag == false){
+            txtMessage.text = "Me:\r\nドアは引いても押しても開かない...";
+            messageMode = true;
+            messageCount = 99;
+          } else {
+            txtMessage.text = "Me:\r\nこの鍵があれば...\r\nよし！開いた！";
+            messageMode = true;
+            messageCount = 97;
+          }
+          break;
+
+        case 2:
+        bg002.setTexture('item1');
+        bg002.setPosition(400,300);
+        bg002.setSize(800,600);
+         txtMessage.setColor("#0");
+          txtMessage.text = "Me:\r\nコルクボードにメモが貼ってあるな...";
+          messageMode = true;
+          messageCount = 99;
+          break;
+          
+        case 3:
+          txtMessage.text = "Me:\r\n窓は防弾ガラスのように頑丈だ。\r\nここから出るのは無理そうだ。";
+          messageMode = true;
+          messageCount = 99;
+          break;
+
+        case 4:
+          if(itemFlag == false){
+            bg002.setTexture('item2');
+            bg002.setPosition(400,300);
+            bg002.setSize(800,600);
+            txtMessage.text = "Me:\r\nん！？シャンデリアの根本に...\r\n鍵があったぞ。";
+            messageMode = true;
+            messageCount = 99;
+            itemFlag = true;
+          } else {
+            txtMessage.text = "Me:\r\nもう何もないぞ";
+            messageMode = true;
+            messageCount = 99;
+          }
+          break;
+
+
+      }
+    }
+ });
+
+ txtMessage = this.add
+.text(100, 400, "Me :\r\nここはどこだ？")
+.setFontSize("32px")
+.setColor("#ffffff");
+messageMode = true;
+messageCount = 0;
+
+txtTime= this.add
+.text(600, 20, "TIME :")
+.setFontSize("24px")
+.setColor("#ffffff");
+
+ }
+  update() { 
+    if(gameState == 0 && remainTimer >= 0){
+      txtTime.text = "TIME:" + remainTimer;
+      cntTimer = cntTimer + 1;
+      if(cntTimer >= 60){
+        seCnt.play();
+        cntTimer = 0;        
+        remainTimer = remainTimer - 1;
+        if(remainTimer <= 0){
+            txtMessage.text = "Me:\r\nん？なんか爆発音が・・・！？";
+            messageMode = true;
+            messageCount = 98;
+        }
+      }
+    }
+  }
+}
+
+function checkClickPoint(x, y){
+  var ret = 0;
+  if(x>=176 && y>=175 && x<=285 && y<=441){
+    ret = 1;//DOOR
+  } else if(x>=312 && y>=222 && x<=406 && y<=285){
+    ret = 2;//BOARD
+  } else if(x>=427 && y>=177 && x<=581 && y<=321){
+    ret = 3;//WINDOW
+  } else if(x>=390 && y>=41 && x<=415 && y<=69){
+    ret = 4;//key
+  }
+  return ret;
+}
+
+var config = {
+type: Phaser.AUTO,
+width: 800, height: 600,
+backgroundColor: "#4488aa",
+audio: { disableWebAudio: true },
+scene: [titleScene, MyScene1]
+};
+var game = new Phaser.Game(config);
+var bg001, bg002;
+var seCnt, seBoom;
+var txtMessage;
+var messageMode = false;
+var messageCount = 0;
+var itemFlag = false;
+var txtTime;
+var cntTimer = 0,remainTimer = 10, gameState = 0;//97=CLEAR/98=GAME OVER
+</script>
+</body>
+</html>
