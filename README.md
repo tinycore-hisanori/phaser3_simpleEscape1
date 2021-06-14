@@ -14,7 +14,7 @@ Phaser3.jsを使ってHTML5のゲームを作るときに参考にしてもら�
  
 以下のアドレスでプレイすることができます。
 
-[かんたん脱出ゲーム1](https://tinycore-hisanori.github.io/phaser3_simpleShooting1/)
+[かんたん脱出ゲーム1](https://tinycore-hisanori.github.io/phaser3_simpleEscape1/)
 
  
 # Features
