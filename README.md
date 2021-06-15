@@ -32,7 +32,7 @@ Phaser3.jsを使ってHTML5のゲームを作るときに参考にしてもら�
 # Note
 
  * 楽曲提供 [魔王魂](https://maou.audio/)
- 
+ * イラスト提供 [イラストAC](https://www.ac-illust.com/)
 
  
 # Author
